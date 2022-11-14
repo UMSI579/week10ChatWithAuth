@@ -1,16 +1,16 @@
 import { Button } from '@rneui/themed';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { subscribeToUsers, getFBAuth, signOutFB } from '../data/DB';
+import { subscribeToUsers, getFBAuth, signOutFB, setActiveChat, subscribeToChat } from '../data/DB';
 
 const auth = getFBAuth();
 
 function HomeScreen({navigation}) {
   
   const users = useSelector(state => {
-    console.log('useSelector, state:', state);
+    //console.log('useSelector, state:', state);
     return state.users;
   });
 
@@ -37,7 +37,14 @@ function HomeScreen({navigation}) {
           renderItem={({item}) => {
             return (
               <View>
-                <Text>{item.displayName}</Text>
+                <TouchableOpacity
+                  onPress={async ()=>{
+                    await subscribeToChat(currentUser.uid, item.uid, dispatch);
+                    navigation.navigate('Chat')
+                  }}
+                >
+                  <Text>{item.displayName}</Text>
+                </TouchableOpacity>
               </View>
             );
           }}

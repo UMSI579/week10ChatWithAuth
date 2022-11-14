@@ -12,8 +12,27 @@ const _loadUsers = (state, action) => {
   }
 }
 
+const _loadActiveChat = (state, action) => {
+  const { participants, messages } = action.payload;
+  const newActiveChat = {
+    participants: participants,
+    messages: messages
+  };
+  console.log('in _loadActiveChat, loading:', newActiveChat);
+  return {
+    ...state,
+    activeChat: newActiveChat
+  }
+}
+
+
+// mainly here to document the store's data structure
 const initialState = {
-  users: []
+  users: [],
+  activeChat: {
+    participants: [],
+    messages: [] // note that in Firebase these will be stored in a colletion, not array
+  }
 }
 
 function rootReducer(state=initialState, action) {
@@ -21,8 +40,9 @@ function rootReducer(state=initialState, action) {
   switch (action.type) {
     case actionTypes.LOAD_USERS:
       return _loadUsers(state, action);
+    case actionTypes.LOAD_ACTIVE_CHAT:
+      return _loadActiveChat(state, action);
     default:
-      console.log('in reducer default, state:', state);
       return state;
   }
 }
