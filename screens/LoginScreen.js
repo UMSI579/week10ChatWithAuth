@@ -157,18 +157,6 @@ function LoginScreen({navigation}) {
 
   const [loginMode, setLoginMode] = useState(true);
 
-  // useEffect(() => {
-  //   onAuthStateChanged(auth, user => {
-  //     if (user) {
-  //       console.log('signed in! user:', user);
-  //       navigation.navigate('Home');
-  //     } else {
-  //       console.log('user is signed out!');
-  //       navigation.navigate('Login');
-  //     }
-  //   })
-  // }, []);
-
   return (
     <View style={styles.container}>
       <View style={styles.bodyContainer}>
