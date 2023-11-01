@@ -1,19 +1,6 @@
 import { Button } from '@rneui/themed';
 import { View, Text, StyleSheet } from 'react-native';
-import { getAuth, signOut } from 'firebase/auth';
-import { getApps, initializeApp } from 'firebase/app';
-import { firebaseConfig } from '../Secrets';
-
-let app;
-const apps = getApps();
-
-if (apps.length == 0) { 
-  app = initializeApp(firebaseConfig);
-} else {
-  app = apps[0];
-}
-
-const auth = getAuth(app);
+import { signOut } from '../AuthManager';
 
 function HomeScreen({navigation}) {
   return (
@@ -23,8 +10,7 @@ function HomeScreen({navigation}) {
       </Text>
       <Button
         onPress={async () => {
-          await signOut(auth);
-          navigation.navigate('Login');
+          signOut(navigation);
         }}
       >
         Now sign out!

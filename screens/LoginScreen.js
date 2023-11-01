@@ -1,25 +1,9 @@
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
-
-import { createUserWithEmailAndPassword, 
-  getAuth, signInWithEmailAndPassword, 
-  updateProfile } from 'firebase/auth';
-import { getApps, initializeApp } from 'firebase/app';
-
 import { Button } from '@rneui/themed';
-import { firebaseConfig } from '../Secrets';
 
-let app;
-const apps = getApps();
-
-if (apps.length == 0) { 
-  app = initializeApp(firebaseConfig);
-} else {
-  app = apps[0];
-}
-
-const auth = getAuth(app);
+import { signIn, signUp } from '../AuthManager';
 
 function SigninBox({navigation}) {
 
@@ -64,8 +48,7 @@ function SigninBox({navigation}) {
         <Button
           onPress={async () => {
             try {
-              await signInWithEmailAndPassword(auth, email, password);
-              navigation.navigate('Home');
+              await signIn(email, password, navigation);
             } catch(error) {
               Alert.alert("Sign In Error", error.message,[{ text: "OK" }])
             }
@@ -138,9 +121,8 @@ function SignupBox({navigation}) {
         <Button
           onPress={async () => {
             try {
-              const userCred = await createUserWithEmailAndPassword(auth, email, password);
-              await updateProfile(userCred.user, {displayName: displayName});
-              navigation.navigate("Home");
+              console.log(navigation);
+              await signUp(displayName, email, password, navigation);
             } catch(error) {
               Alert.alert("Sign Up Error", error.message,[{ text: "OK" }])
             }
@@ -163,7 +145,7 @@ function LoginScreen({navigation}) {
         {loginMode?
           <SigninBox navigation={navigation}/>
         :
-          <SignupBox/>
+          <SignupBox navigation={navigation}/>
         }
         </View>
       <View styles={styles.modeSwitchContainer}>
