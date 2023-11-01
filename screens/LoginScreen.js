@@ -2,7 +2,9 @@
 import { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, 
+  getAuth, signInWithEmailAndPassword, 
+  updateProfile } from 'firebase/auth';
 import { getApps, initializeApp } from 'firebase/app';
 
 import { Button } from '@rneui/themed';
@@ -65,7 +67,7 @@ function SigninBox({navigation}) {
               await signInWithEmailAndPassword(auth, email, password);
               navigation.navigate('Home');
             } catch(error) {
-              Alert.alert("Sign Up Error", error.message,[{ text: "OK" }])
+              Alert.alert("Sign In Error", error.message,[{ text: "OK" }])
             }
           }}
         >
@@ -138,12 +140,13 @@ function SignupBox({navigation}) {
             try {
               const userCred = await createUserWithEmailAndPassword(auth, email, password);
               await updateProfile(userCred.user, {displayName: displayName});
+              navigation.navigate("Home");
             } catch(error) {
               Alert.alert("Sign Up Error", error.message,[{ text: "OK" }])
             }
           }}
         >
-          Sign In
+          Sign Up
         </Button>  
       </View>
     </View>
@@ -154,17 +157,17 @@ function LoginScreen({navigation}) {
 
   const [loginMode, setLoginMode] = useState(true);
 
-  useEffect(() => {
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        console.log('signed in! user:', user);
-        navigation.navigate('Home');
-      } else {
-        console.log('user is signed out!');
-        navigation.navigate('Login');
-      }
-    })
-  }, []);
+  // useEffect(() => {
+  //   onAuthStateChanged(auth, user => {
+  //     if (user) {
+  //       console.log('signed in! user:', user);
+  //       navigation.navigate('Home');
+  //     } else {
+  //       console.log('user is signed out!');
+  //       navigation.navigate('Login');
+  //     }
+  //   })
+  // }, []);
 
   return (
     <View style={styles.container}>
