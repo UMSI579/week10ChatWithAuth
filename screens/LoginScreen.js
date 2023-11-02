@@ -49,7 +49,6 @@ function SigninBox({navigation}) {
           onPress={async () => {
             try {
               await signIn(email, password);
-              navigation.navigate('Home');
             } catch(error) {
               Alert.alert("Sign In Error", error.message,[{ text: "OK" }])
             }
@@ -123,7 +122,6 @@ function SignupBox({navigation}) {
           onPress={async () => {
             try {
               await signUp(displayName, email, password);
-              navigation.navigate("Home");
             } catch(error) {
               Alert.alert("Sign Up Error", error.message,[{ text: "OK" }])
             }

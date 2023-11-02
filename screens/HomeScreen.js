@@ -13,7 +13,6 @@ function HomeScreen({navigation}) {
         onPress={async () => {
           try {
             await signOut();
-            navigation.navigate('Login');
           } catch (error) {
             Alert.alert("Sign In Error", error.message,[{ text: "OK" }])
           }
