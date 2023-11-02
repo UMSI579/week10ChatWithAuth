@@ -1,9 +1,9 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import { Button } from '@rneui/themed';
 
-import { signIn, signUp } from '../AuthManager';
+import { signIn, signUp, subscribeToAuthChanges } from '../AuthManager';
 
 function SigninBox({navigation}) {
 
@@ -140,6 +140,10 @@ function LoginScreen({navigation}) {
 
   const [loginMode, setLoginMode] = useState(true);
 
+  useEffect(()=> {
+    subscribeToAuthChanges(navigation);
+  }, []);
+  
   return (
     <View style={styles.container}>
       <View style={styles.bodyContainer}>
