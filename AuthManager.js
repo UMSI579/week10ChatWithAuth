@@ -11,6 +11,7 @@ import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { getApps, initializeApp } from 'firebase/app';
 
 import { firebaseConfig } from './Secrets';
+import { subscribeToUserUpdates } from './data/Actions';
 
 let app, auth;
 
@@ -32,10 +33,8 @@ try {
 const subscribeToAuthChanges = (navigation) => {
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log('signed in! user:', user);
       navigation.navigate('Home');
     } else {
-      console.log('user is signed out!');
       navigation.navigate('Login');
     }
   })
@@ -48,6 +47,7 @@ const signIn = async (email, password) => {
 const signUp = async (displayName, email, password) => {
   const userCred = await createUserWithEmailAndPassword(auth, email, password);
   await updateProfile(userCred.user, {displayName: displayName});
+  return userCred.user;
 }
 
 const signOut = async () => {
@@ -55,6 +55,7 @@ const signOut = async () => {
 }
 
 const getAuthUser = () => {
+  console.log('getAuthUser');
   return auth.currentUser;
 }
 

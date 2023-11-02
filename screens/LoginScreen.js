@@ -2,14 +2,16 @@
 import { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import { Button } from '@rneui/themed';
+import { useDispatch } from 'react-redux';
 
 import { signIn, signUp, subscribeToAuthChanges } from '../AuthManager';
+import { addUser, subscribeToUserUpdates } from '../data/Actions';
 
 function SigninBox({navigation}) {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  
   return (
     <View style={styles.loginContainer}>
       <Text style={styles.loginHeaderText}>Sign In</Text>
@@ -67,6 +69,8 @@ function SignupBox({navigation}) {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
 
+  const dispatch = useDispatch();
+
   return (
     <View style={styles.loginContainer}>
       <Text style={styles.loginHeaderText}>Sign Up</Text>
@@ -121,7 +125,9 @@ function SignupBox({navigation}) {
         <Button
           onPress={async () => {
             try {
-              await signUp(displayName, email, password);
+              const newUser = await signUp(displayName, email, password);
+              console.log('about to add', newUser);
+              dispatch(addUser(newUser));
             } catch(error) {
               Alert.alert("Sign Up Error", error.message,[{ text: "OK" }])
             }
