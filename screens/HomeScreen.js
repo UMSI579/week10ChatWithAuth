@@ -1,5 +1,5 @@
 import { Button } from '@rneui/themed';
-import { View, Text, StyleSheet, Alert, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Alert, FlatList, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { subscribeToUserUpdates } from '../data/Actions';
@@ -32,7 +32,11 @@ function HomeScreen({navigation}) {
               return (<View/>)
             } else {
               return (
-                <Text>{item.displayName}</Text>
+                <TouchableOpacity
+                  onPress={()=>navigation.navigate('Chat')}
+                >
+                  <Text>{item.displayName}</Text>
+                </TouchableOpacity>
               )
             }
           }}

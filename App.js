@@ -8,6 +8,7 @@ import { rootReducer } from './data/Reducer';
 
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
+import ChatScreen from './screens/ChatScreen';
 
 const store = configureStore({
   reducer: rootReducer, 
@@ -22,6 +23,7 @@ function App() {
         <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
           <Stack.Screen name='Login' component={LoginScreen}/>
           <Stack.Screen name='Home' component={HomeScreen}/>
+          <Stack.Screen name='Chat' component={ChatScreen}/>
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
