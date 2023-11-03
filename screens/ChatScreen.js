@@ -23,18 +23,16 @@ function ChatScreen({navigation, route}) {
 
   const [messages, setMessages] = useState(dummyChat);
   const [inputText, setInputText] = useState('');
-  let scrollView;
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
+    <View style={styles.container} >
+      <KeyboardAvoidingView 
       behavior='position'>
       <View style={styles.header}>
         <Text style={styles.headerText}>Chat with {otherUser} </Text>
       </View>
       <View style={styles.body}>
         <ScrollView
-          ref={ref=>scrollView = ref}
           contentContainerStyle={styles.scrollContainer}
         >
           {messages.map(msg => {
@@ -68,7 +66,6 @@ function ChatScreen({navigation, route}) {
               timestamp: Date.now()
             }));
             setInputText('');
-            scrollView.scrollToEnd()
           }}
         >
           <Icon 
@@ -79,6 +76,7 @@ function ChatScreen({navigation, route}) {
         </Button>
       </View>
     </KeyboardAvoidingView>
+    </View>
   )
 
 
@@ -89,6 +87,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
     backgroundColor: 'white'
   },
   header: {
@@ -105,14 +104,16 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'flex-end', 
     alignItems: 'stretch',
-    padding: '3%'
+    padding: '3%',
+    //backgroundColor: 'tan'
   },
   scrollContainer: {
     flex: 1.0, 
     width: '100%',
     justifyContent: 'flex-end', 
     alignItems: 'stretch',
-    padding: '3%'
+    padding: '3%',
+    //backgroundColor: 'pink'
   },
   messageBubble: {
     borderRadius: 6,
