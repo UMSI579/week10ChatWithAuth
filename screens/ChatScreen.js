@@ -1,5 +1,6 @@
 import { Button, Input, Icon } from '@rneui/themed';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 
 
 function ChatScreen({navigation, route}) {
@@ -20,17 +21,23 @@ function ChatScreen({navigation, route}) {
     }
   ];
 
+  const [messages, setMessages] = useState(dummyChat);
+  const [inputText, setInputText] = useState('');
+  let scrollView;
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView 
+      style={styles.container} 
+      behavior='position'>
       <View style={styles.header}>
-        <Text>Chat with {otherUser} </Text>
+        <Text style={styles.headerText}>Chat with {otherUser} </Text>
       </View>
       <View style={styles.body}>
         <ScrollView
+          ref={ref=>scrollView = ref}
           contentContainerStyle={styles.scrollContainer}
         >
-          {dummyChat.map(msg => {
+          {messages.map(msg => {
             return (
               <View 
                 key={msg.timestamp}
@@ -49,9 +56,20 @@ function ChatScreen({navigation, route}) {
         <Input
           containerStyle={styles.inputBox}
           placeholder="Enter chat message"
+          value={inputText}
+          onChangeText={text=>setInputText(text)}
         />
         <Button
           buttonStyle={styles.sendButton}
+          onPress={()=>{
+            setMessages(messages.concat({
+              author: currentUser,
+              message: inputText,
+              timestamp: Date.now()
+            }));
+            setInputText('');
+            scrollView.scrollToEnd()
+          }}
         >
           <Icon 
             name="send"
@@ -60,8 +78,7 @@ function ChatScreen({navigation, route}) {
           />
         </Button>
       </View>
-
-    </View>
+    </KeyboardAvoidingView>
   )
 
 
@@ -75,12 +92,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'white'
   },
   header: {
-    flex: 0.2,
-    justifyContent: 'center', 
+    flex: 0.1,
+    justifyContent: 'flex-end', 
     alignItems: 'center',
+    padding: '3%'
+  },
+  headerText: {
+    fontSize: 32
   },
   body: {
-    flex: 0.6,
+    flex: 0.8,
     width: '100%',
     justifyContent: 'flex-end', 
     alignItems: 'stretch',
@@ -109,7 +130,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightgray'
   },
   footer: {
-    flex: 0.2, 
+    flex: 0.1, 
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-between', 
