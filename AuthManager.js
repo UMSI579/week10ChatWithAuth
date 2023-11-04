@@ -11,7 +11,6 @@ import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { getApps, initializeApp } from 'firebase/app';
 
 import { firebaseConfig } from './Secrets';
-import { subscribeToUserUpdates } from './data/Actions';
 
 let app, auth;
 
@@ -55,7 +54,6 @@ const signOut = async () => {
 }
 
 const getAuthUser = () => {
-  console.log('getAuthUser');
   return auth.currentUser;
 }
 

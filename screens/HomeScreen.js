@@ -2,7 +2,7 @@ import { Button } from '@rneui/themed';
 import { View, Text, StyleSheet, Alert, FlatList, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { subscribeToUserUpdates } from '../data/Actions';
+import { addOrSelectChat, subscribeToUserUpdates, unsubscribeFromUsers } from '../data/Actions';
 import { getAuthUser, signOut } from '../AuthManager';
 
 function HomeScreen({navigation}) {
@@ -33,7 +33,13 @@ function HomeScreen({navigation}) {
             } else {
               return (
                 <TouchableOpacity
-                  onPress={()=>navigation.navigate('Chat')}
+                  onPress={()=>{
+                    dispatch(addOrSelectChat(currentAuthUser.uid, item.key)); // race condition?
+                    navigation.navigate('Chat', {
+                      currentUserId: currentAuthUser.uid, 
+                      otherUserId: item.key
+                  })
+                }}
                 >
                   <Text>{item.displayName}</Text>
                 </TouchableOpacity>
@@ -45,6 +51,7 @@ function HomeScreen({navigation}) {
       <Button
         onPress={async () => {
           try {
+            unsubscribeFromUsers();
             await signOut();
           } catch (error) {
             Alert.alert("Sign In Error", error.message,[{ text: "OK" }])

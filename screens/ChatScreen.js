@@ -1,35 +1,52 @@
 import { Button, Input, Icon } from '@rneui/themed';
-import { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { addCurrentChatMessage, unsubscribeFromChat } from '../data/Actions';
 
 
 function ChatScreen({navigation, route}) {
 
-  const currentUser = "Bob";
-  const otherUser = "Alice";
+  const {currentUserId, otherUserId} = route?.params;
 
-  const dummyChat = [
-    {
-      author: "Alice",
-      message: "Hello, Bob",
-      timestamp: Date.now()
-    },
-    {
-      author: "Bob",
-      message: "Why hi there, Alice",
-      timestamp: Date.now() + 1
-    }
-  ];
-
-  const [messages, setMessages] = useState(dummyChat);
+  //  const [messages, setMessages] = useState(dummyChat);
   const [inputText, setInputText] = useState('');
+
+  const currentChat = useSelector(state => state.currentChat);
+  const currentUser = useSelector(state => state.users.find(u=>u.key===currentUserId));
+  const otherUser = useSelector(state => state.users.find(u=>u.key===otherUserId));
+
+  const messages = currentChat?.messages ?? [];
+  const dispatch = useDispatch();
+
+  useEffect(()=>{
+
+    return ()=>{
+      unsubscribeFromChat();
+    }
+  }, []);
 
   return (
     <View style={styles.container} >
       <KeyboardAvoidingView 
-      behavior='position'>
+        behavior='position'>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Chat with {otherUser} </Text>
+        <TouchableOpacity 
+            style={styles.headerLeft}
+            onPress={()=>navigation.navigate('Home')}>
+          <Icon
+            name="arrow-back"
+            color="black"
+            type="material"
+            size={32}
+          />
+        </TouchableOpacity>
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerText}>Chat with {otherUser.displayName} </Text>
+        </View>
+        <View style={styles.headerRight}>
+
+        </View>
       </View>
       <View style={styles.body}>
         <ScrollView
@@ -40,7 +57,7 @@ function ChatScreen({navigation, route}) {
               <View 
                 key={msg.timestamp}
                 style={[styles.messageBubble, 
-                  msg.author === currentUser ?
+                  msg.author === currentUser.key ?
                   styles.self :
                   styles.other 
                 ]}>
@@ -60,11 +77,16 @@ function ChatScreen({navigation, route}) {
         <Button
           buttonStyle={styles.sendButton}
           onPress={()=>{
-            setMessages(messages.concat({
-              author: currentUser,
+            dispatch(addCurrentChatMessage({
+              author: currentUser.key,
               message: inputText,
-              timestamp: Date.now()
-            }));
+              timestamp: new Date()
+            }))
+            // setMessages(messages.concat({
+            //   author: currentUser,
+            //   message: inputText,
+            //   timestamp: Date.now()
+            // }));
             setInputText('');
           }}
         >
@@ -78,8 +100,6 @@ function ChatScreen({navigation, route}) {
     </KeyboardAvoidingView>
     </View>
   )
-
-
 }
 
 const styles = StyleSheet.create({
@@ -92,9 +112,27 @@ const styles = StyleSheet.create({
   },
   header: {
     flex: 0.1,
-    justifyContent: 'flex-end', 
-    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center', 
+    alignItems: 'flex-end',
+    width: '100%',
     padding: '3%'
+  },
+  headerLeft: {
+    flex: 0.2,
+    justifyContent: 'flex-end',
+    alignItems: 'center', 
+  },
+  headerCenter: {
+    flex: 0.6,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  headerRight: {
+    flex: 0.2,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    backgroundColor: 'cyan'
   },
   headerText: {
     fontSize: 32
@@ -105,7 +143,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', 
     alignItems: 'stretch',
     padding: '3%',
-    //backgroundColor: 'tan'
   },
   scrollContainer: {
     flex: 1.0, 
@@ -113,7 +150,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', 
     alignItems: 'stretch',
     padding: '3%',
-    //backgroundColor: 'pink'
   },
   messageBubble: {
     borderRadius: 6,
