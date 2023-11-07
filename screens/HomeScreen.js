@@ -18,10 +18,10 @@ function HomeScreen({navigation}) {
 
   return (
     <View style={styles.container}>
-      <Text>
+      <Text style={styles.text}>
         You're signed in, { currentAuthUser?.displayName }!
       </Text>
-      <Text>
+      <Text style={styles.text}>
         Here are your friends!
       </Text>
       <View style={styles.listContainer}>
@@ -41,7 +41,7 @@ function HomeScreen({navigation}) {
                   })
                 }}
                 >
-                  <Text>{item.displayName}</Text>
+                  <Text style={styles.text}>{item.displayName}</Text>
                 </TouchableOpacity>
               )
             }
@@ -73,8 +73,14 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 0.5,
-    witdh: '100%',
-
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '5%'
+  },
+  text: {
+    fontSize: 20,
+    padding: '1%'
   }
 });
 
