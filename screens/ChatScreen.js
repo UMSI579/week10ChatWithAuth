@@ -26,60 +26,79 @@ function ChatScreen({navigation, route}) {
 
   return (
     <View style={styles.container} >
+      {/*           
+        KeyboardAvoidingView does what it sounds like it would.
+        You may need to read the docs and play around with it
+        to get it to work as you expect. This works OK on my iPhone.
+      */}
       <KeyboardAvoidingView 
-      behavior='position'>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Chat with {otherUser} </Text>
-      </View>
-      <View style={styles.body}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-        >
-          {messages.map(msg => {
-            return (
-              <View 
-                key={msg.timestamp}
-                style={[styles.messageBubble, 
-                  msg.author === currentUser ?
-                  styles.self :
-                  styles.other 
-                ]}>
-                <Text style={styles.messageText}>{msg.message}</Text>
-              </View>
-            )
-          })}
-        </ScrollView>
-      </View>
-      <View style={styles.footer}>
-        <Input
-          containerStyle={styles.inputBox}
-          placeholder="Enter chat message"
-          value={inputText}
-          onChangeText={text=>setInputText(text)}
-        />
-        <Button
-          buttonStyle={styles.sendButton}
-          onPress={()=>{
-            setMessages(messages.concat({
-              author: currentUser,
-              message: inputText,
-              timestamp: Date.now()
-            }));
-            setInputText('');
-          }}
-        >
-          <Icon 
-            name="send"
-            size={32}
-            color="purple"  
+        behavior='position'>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Chat with {otherUser} </Text>
+        </View>
+        <View style={styles.body}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContainer}
+          >
+          {/*           
+            Here is an alternative to a FlatList for rendering a list
+            in a scrolling view. If you have more than one list you need
+            to render and you want them to be part of the same scroll view
+            you'll need to use this approach. If you just have one list
+            you can choose which you prefer.
+          */}
+            {messages.map(msg => {
+              /*           
+                Note the use of conditional styling and alignSelf to render
+                different messages on different sides of the screen. Also note 
+                that if you're rendering a list of components each one needs to 
+                have a "key", just like a FlatList.
+              */
+              return (
+                <View 
+                  key={msg.timestamp}
+                  style={[styles.messageBubble, 
+                    msg.author === currentUser ?
+                    styles.self :
+                    styles.other 
+                  ]}>
+                  <Text style={styles.messageText}>{msg.message}</Text>
+                </View>
+              )
+            })}
+          </ScrollView>
+        </View>
+        <View style={styles.footer}>
+          <Input
+            containerStyle={styles.inputBox}
+            placeholder="Enter chat message"
+            value={inputText}
+            onChangeText={text=>setInputText(text)}
           />
-        </Button>
-      </View>
-    </KeyboardAvoidingView>
+          {/*           
+            When the user clicks "send" the message is added to the list
+          */}
+          <Button
+            buttonStyle={styles.sendButton}
+            onPress={()=>{
+              setMessages(messages.concat({
+                author: currentUser,
+                message: inputText,
+                timestamp: Date.now()
+              }));
+              setInputText('');
+            }}
+          >
+            <Icon 
+              name="send"
+              size={32}
+              color="purple"  
+            />
+          </Button>
+        </View>
+      </KeyboardAvoidingView>
     </View>
   )
-
-
 }
 
 const styles = StyleSheet.create({
