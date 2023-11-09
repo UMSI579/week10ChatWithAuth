@@ -132,7 +132,6 @@ const styles = StyleSheet.create({
     flex: 0.2,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    backgroundColor: 'cyan'
   },
   headerText: {
     fontSize: 32

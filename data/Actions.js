@@ -2,7 +2,7 @@
 
 import { initializeApp, getApps } from 'firebase/app';
 import { setDoc, addDoc, doc, getFirestore, getDocs, 
-  collection, onSnapshot, query, where } from 'firebase/firestore';
+  collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 
 import { firebaseConfig } from '../Secrets';
 import { ADD_USER, LOAD_USERS, SET_CURRENT_CHAT } from './Reducer';
@@ -80,8 +80,12 @@ const addOrSelectChat = (user1id, user2id) => {
 
     unsubscribeFromChat();
 
+    const q = query(
+      collection(db, 'chats', theChat.id, 'messages'),
+      orderBy('timestamp', 'asc')
+    );
     chatSnapshotUnsub = onSnapshot(
-      collection(db, 'chats', theChat.id, 'messages'), 
+      q, 
       (messagesSnapshot) => {
         const messages = messagesSnapshot.docs.map(msgSnap => {
           const message = msgSnap.data();
