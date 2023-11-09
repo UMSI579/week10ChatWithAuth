@@ -1,121 +1,102 @@
 import { Button, Input, Icon } from '@rneui/themed';
-import { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, 
-  KeyboardAvoidingView, TouchableOpacity } 
-  from 'react-native';
-
+import { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { addCurrentChatMessage, unsubscribeFromChat } from '../data/Actions';
 
 function ChatScreen({navigation, route}) {
 
-  const currentUser = "Bob";
-  const otherUser = "Alice";
+  const {currentUserId, otherUserId} = route.params;
 
-  const dummyChat = [
-    {
-      author: "Alice",
-      message: "Hello, Bob",
-      timestamp: Date.now()
-    },
-    {
-      author: "Bob",
-      message: "Why hi there, Alice",
-      timestamp: Date.now() + 1
-    }
-  ];
-
-  const [messages, setMessages] = useState(dummyChat);
+  //  const [messages, setMessages] = useState(dummyChat);
   const [inputText, setInputText] = useState('');
+
+  const currentChat = useSelector(state => state.currentChat);
+  const currentUser = useSelector(state => state.users.find(u=>u.key===currentUserId));
+  const otherUser = useSelector(state => state.users.find(u=>u.key===otherUserId));
+
+  const messages = currentChat?.messages ?? [];
+  const dispatch = useDispatch();
+
+  // useEffect(()=>{
+
+  //   return ()=>{
+  //     unsubscribeFromChat();
+  //   }
+  // }, []);
 
   return (
     <View style={styles.container} >
-      {/*           
-        KeyboardAvoidingView does what it sounds like it would.
-        You may need to read the docs and play around with it
-        to get it to work as you expect. This works OK on my iPhone.
-      */}
       <KeyboardAvoidingView 
         behavior='position'>
-        <View style={styles.header}>
-          <TouchableOpacity 
-              style={styles.headerLeft}
-              onPress={()=>navigation.navigate('Home')}
-          >
-            <Icon
-              name="arrow-back"
-              color="black"
-              type="material"
-              size={32}
-            />
-          </TouchableOpacity>
-          <View style={styles.headerCenter}>
-            <Text style={styles.headerText}>
-              Chat with {otherUser.displayName}
-            </Text>
-          </View>
-          <View style={styles.headerRight}>
-          </View>
-        </View>
-        <View style={styles.body}>
-          <ScrollView
-            contentContainerStyle={styles.scrollContainer}
-          >
-          {/*           
-            Here is an alternative to a FlatList for rendering a list
-            in a scrolling view. If you have more than one list you need
-            to render and you want them to be part of the same scroll view
-            you'll need to use this approach. If you just have one list
-            you can choose which you prefer.
-          */}
-            {messages.map(msg => {
-              /*           
-                Note the use of conditional styling and alignSelf to render
-                different messages on different sides of the screen. Also note 
-                that if you're rendering a list of components each one needs to 
-                have a "key", just like a FlatList.
-              */
-              return (
-                <View 
-                  key={msg.timestamp}
-                  style={[styles.messageBubble, 
-                    msg.author === currentUser ?
-                    styles.self :
-                    styles.other 
-                  ]}>
-                  <Text style={styles.messageText}>{msg.message}</Text>
-                </View>
-              )
-            })}
-          </ScrollView>
-        </View>
-        <View style={styles.footer}>
-          <Input
-            containerStyle={styles.inputBox}
-            placeholder="Enter chat message"
-            value={inputText}
-            onChangeText={text=>setInputText(text)}
+      <View style={styles.header}>
+        <TouchableOpacity 
+            style={styles.headerLeft}
+            onPress={()=>navigation.navigate('Home')}>
+          <Icon
+            name="arrow-back"
+            color="black"
+            type="material"
+            size={32}
           />
-          {/*           
-            When the user clicks "send" the message is added to the list
-          */}
-          <Button
-            buttonStyle={styles.sendButton}
-            onPress={()=>{
-              setMessages(messages.concat({
-                author: currentUser,
-                message: inputText,
-                timestamp: Date.now()
-              }));
-              setInputText('');
-            }}
-          >
-            <Icon 
-              name="send"
-              size={32}
-              color="purple"  
-            />
-          </Button>
+        </TouchableOpacity>
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerText}>Chat with {otherUser.displayName} </Text>
         </View>
-      </KeyboardAvoidingView>
+        <View style={styles.headerRight}>
+
+        </View>
+      </View>
+      <View style={styles.body}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+        >
+          {messages.map(msg => {
+            return (
+              <View 
+                key={msg.timestamp}
+                style={[styles.messageBubble, 
+                  msg.author === currentUser.key ?
+                  styles.self :
+                  styles.other 
+                ]}>
+                <Text style={styles.messageText}>{msg.message}</Text>
+              </View>
+            )
+          })}
+        </ScrollView>
+      </View>
+      <View style={styles.footer}>
+        <Input
+          containerStyle={styles.inputBox}
+          placeholder="Enter chat message"
+          value={inputText}
+          onChangeText={text=>setInputText(text)}
+        />
+        <Button
+          buttonStyle={styles.sendButton}
+          onPress={()=>{
+            dispatch(addCurrentChatMessage({
+              author: currentUser.key,
+              message: inputText,
+              timestamp: new Date()
+            }))
+            // setMessages(messages.concat({
+            //   author: currentUser,
+            //   message: inputText,
+            //   timestamp: Date.now()
+            // }));
+            setInputText('');
+          }}
+        >
+          <Icon 
+            name="send"
+            size={32}
+            color="purple"  
+          />
+        </Button>
+      </View>
+    </KeyboardAvoidingView>
     </View>
   )
 }
@@ -129,14 +110,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white'
   },
   header: {
-    flex: 0.2,
+    flex: 0.1,
     flexDirection: 'row',
-    justifyContent: 'flex-end', 
-    alignItems: 'center',
+    justifyContent: 'center', 
+    alignItems: 'flex-end',
+    width: '100%',
     padding: '3%'
-  },
-  headerText: {
-    fontSize: 32
   },
   headerLeft: {
     flex: 0.2,
@@ -152,6 +131,9 @@ const styles = StyleSheet.create({
     flex: 0.2,
     justifyContent: 'flex-end',
     alignItems: 'center',
+  },
+  headerText: {
+    fontSize: 32
   },
   body: {
     flex: 0.8,

@@ -1,16 +1,17 @@
 
 
 import { initializeApp } from 'firebase/app';
-import { setDoc, addDoc, doc, getFirestore, 
-  getDocs, collection, query, where, onSnapshot } from 'firebase/firestore';
+import { setDoc, addDoc, doc, getFirestore,
+  getDocs, collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 
 import { firebaseConfig } from '../Secrets';
-import { ADD_USER, LOAD_USERS } from './Reducer';
+import { ADD_USER, LOAD_USERS, SET_CURRENT_CHAT } from './Reducer';
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 let snapshotUnsubsribe = undefined;
+let chatSnapshotUnsub = undefined;
 
 const subscribeToUserUpdates = () => {
   if (snapshotUnsubsribe) {
@@ -79,14 +80,51 @@ const addOrSelectChat = (user1id, user2id) => {
       }
       const chatRef = await addDoc(collection(db, 'chats'), theChat);
       theChat.id = chatRef.id
-      console.log('created a new chat:', theChat);
     } else { // we did find a match, so let's use it.
       theChat = {
         ...chatSnap.data(),
         id: chatSnap.id
       }
-      console.log('found a matching chat:', theChat);
     }
+
+    dispatch({
+      type: SET_CURRENT_CHAT,
+      payload: {
+        currentChat: theChat
+      }
+    }); // initial dispatch
+
+    if (chatSnapshotUnsub) {
+      chatSnapshotUnsub();
+      chatSnapshotUnsub = undefined;
+    }
+
+    const q = query(
+      collection(db, 'chats', theChat.id, 'messages'),
+      orderBy('timestamp', 'asc')
+    );
+    chatSnapshotUnsub = onSnapshot(
+      q, 
+      (messagesSnapshot) => {
+        const messages = messagesSnapshot.docs.map(msgSnap => {
+          const message = msgSnap.data();
+          return {
+            ...message,
+            timestamp: message.timestamp.seconds,
+            id: msgSnap.id
+          }
+        });
+        dispatch({
+          type: SET_CURRENT_CHAT,
+          payload: {
+            currentChat: {
+              ...theChat,
+              messages: messages
+            }
+          }
+        })
+      }
+    );
   }
 }
 
