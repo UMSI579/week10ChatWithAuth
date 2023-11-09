@@ -10,15 +10,15 @@ import { ADD_USER, LOAD_USERS, SET_CURRENT_CHAT } from './Reducer';
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let snapshotUnsubsribe = undefined;
+let usersSnapshotUnsub = undefined;
 let chatSnapshotUnsub = undefined;
 
 const subscribeToUserUpdates = () => {
-  if (snapshotUnsubsribe) {
-    snapshotUnsubsribe();
+  if (usersSnapshotUnsub) {
+    usersSnapshotUnsub();
   }
   return (dispatch) => {
-    snapshotUnsubsribe =  onSnapshot(collection(db, 'users'), usersSnapshot => {
+    usersSnapshotUnsub =  onSnapshot(collection(db, 'users'), usersSnapshot => {
       const updatedUsers = usersSnapshot.docs.map(uSnap => {
         console.log(uSnap.data());
         return uSnap.data(); // already has key?
@@ -135,5 +135,25 @@ const addCurrentChatMessage = (message) => {
     await addDoc(messageCollection, message); // no need to dispatch
   }
 }
+const unsubscribeFromUsers = () => {
+  if (usersSnapshotUnsub) {
+    usersSnapshotUnsub();
+    usersSnapshotUnsub = undefined;
+  }
+}
 
-export { addUser, subscribeToUserUpdates, addOrSelectChat, addCurrentChatMessage }
+const unsubscribeFromChat = () => {
+  if (chatSnapshotUnsub) {
+    chatSnapshotUnsub();
+    chatSnapshotUnsub = undefined;
+  }
+}
+
+export { 
+  addUser, 
+  subscribeToUserUpdates, 
+  addOrSelectChat, 
+  addCurrentChatMessage,
+  unsubscribeFromChat,
+  unsubscribeFromUsers
+}

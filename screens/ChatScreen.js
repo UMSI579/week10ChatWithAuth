@@ -18,12 +18,11 @@ function ChatScreen({navigation, route}) {
   const messages = currentChat?.messages ?? [];
   const dispatch = useDispatch();
 
-  // useEffect(()=>{
-
-  //   return ()=>{
-  //     unsubscribeFromChat();
-  //   }
-  // }, []);
+  useEffect(()=>{
+    return ()=>{
+      unsubscribeFromChat();
+    }
+  }, []);
 
   return (
     <View style={styles.container} >

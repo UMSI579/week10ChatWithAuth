@@ -2,7 +2,7 @@ import { Button } from '@rneui/themed';
 import { View, Text, StyleSheet, Alert, FlatList, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { subscribeToUserUpdates, addOrSelectChat } from '../data/Actions';
+import { subscribeToUserUpdates, addOrSelectChat, unsubscribeFromUsers } from '../data/Actions';
 import { getAuthUser, signOut } from '../AuthManager';
 
 function HomeScreen({navigation}) {
@@ -51,6 +51,7 @@ function HomeScreen({navigation}) {
       <Button
         onPress={async () => {
           try {
+            unsubscribeFromUsers();
             await signOut();
           } catch (error) {
             Alert.alert("Sign In Error", error.message,[{ text: "OK" }])
