@@ -1,7 +1,8 @@
 
 
 import { initializeApp } from 'firebase/app';
-import { setDoc, doc, getFirestore, getDocs, collection, onSnapshot } from 'firebase/firestore';
+import { setDoc, addDoc, doc, getFirestore, 
+  getDocs, collection, query, where, onSnapshot } from 'firebase/firestore';
 
 import { firebaseConfig } from '../Secrets';
 import { ADD_USER, LOAD_USERS } from './Reducer';

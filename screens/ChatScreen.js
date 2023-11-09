@@ -38,7 +38,8 @@ function ChatScreen({navigation, route}) {
         <View style={styles.header}>
           <TouchableOpacity 
               style={styles.headerLeft}
-              onPress={()=>navigation.navigate('Home')}>
+              onPress={()=>navigation.navigate('Home')}
+          >
             <Icon
               name="arrow-back"
               color="black"
@@ -128,7 +129,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white'
   },
   header: {
-    flex: 0.1,
+    flex: 0.2,
+    flexDirection: 'row',
     justifyContent: 'flex-end', 
     alignItems: 'center',
     padding: '3%'
