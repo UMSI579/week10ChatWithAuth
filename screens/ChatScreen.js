@@ -1,6 +1,8 @@
 import { Button, Input, Icon } from '@rneui/themed';
 import { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, 
+  KeyboardAvoidingView, TouchableOpacity } 
+  from 'react-native';
 
 
 function ChatScreen({navigation, route}) {
@@ -34,7 +36,23 @@ function ChatScreen({navigation, route}) {
       <KeyboardAvoidingView 
         behavior='position'>
         <View style={styles.header}>
-          <Text style={styles.headerText}>Chat with {otherUser} </Text>
+          <TouchableOpacity 
+              style={styles.headerLeft}
+              onPress={()=>navigation.navigate('Home')}>
+            <Icon
+              name="arrow-back"
+              color="black"
+              type="material"
+              size={32}
+            />
+          </TouchableOpacity>
+          <View style={styles.headerCenter}>
+            <Text style={styles.headerText}>
+              Chat with {otherUser.displayName}
+            </Text>
+          </View>
+          <View style={styles.headerRight}>
+          </View>
         </View>
         <View style={styles.body}>
           <ScrollView
@@ -118,13 +136,27 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 32
   },
+  headerLeft: {
+    flex: 0.2,
+    justifyContent: 'flex-end',
+    alignItems: 'center', 
+  },
+  headerCenter: {
+    flex: 0.6,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  headerRight: {
+    flex: 0.2,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
   body: {
     flex: 0.8,
     width: '100%',
     justifyContent: 'flex-end', 
     alignItems: 'stretch',
     padding: '3%',
-    //backgroundColor: 'tan'
   },
   scrollContainer: {
     flex: 1.0, 
@@ -132,7 +164,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', 
     alignItems: 'stretch',
     padding: '3%',
-    //backgroundColor: 'pink'
   },
   messageBubble: {
     borderRadius: 6,
