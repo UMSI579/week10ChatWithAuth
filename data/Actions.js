@@ -128,4 +128,12 @@ const addOrSelectChat = (user1id, user2id) => {
   }
 }
 
-export { addUser, subscribeToUserUpdates, addOrSelectChat }
+const addCurrentChatMessage = (message) => {
+  return async (dispatch, getState) => {
+    const currentChat = getState().currentChat;
+    const messageCollection = collection(db, 'chats', currentChat.id, 'messages');
+    await addDoc(messageCollection, message); // no need to dispatch
+  }
+}
+
+export { addUser, subscribeToUserUpdates, addOrSelectChat, addCurrentChatMessage }
