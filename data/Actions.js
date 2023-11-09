@@ -48,4 +48,8 @@ const addUser = (user) => {
   }
 }
 
+const addOrFindChat = (user1, user2) => {
+  
+}
+
 export { addUser, subscribeToUserUpdates }
